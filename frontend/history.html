@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prediction History — Student Performance Predictor</title>
+  <meta name="description" content="View all past student performance predictions, scores, grades, and trends over time." />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="stylesheet" href="/static/css/components.css" />
+  <link rel="stylesheet" href="/static/css/animations.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-brand">
+        <div class="brand-icon">🎓</div>
+        <span>StudyPredict <span style="color:var(--accent-cyan);font-weight:300">AI</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" id="nav-home">Dashboard</a></li>
+        <li><a href="/predict" id="nav-predict">Predict</a></li>
+        <li><a href="/history" class="active" id="nav-history">History</a></li>
+      </ul>
+      <a href="/predict" class="btn btn-primary btn-sm">
+        <span>➕</span> New Prediction
+      </a>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="py-2xl" style="text-align:center;position:relative;overflow:hidden">
+    <div class="orb orb-1" style="opacity:0.4"></div>
+    <div class="container" style="position:relative;z-index:2">
+      <div class="hero-badge">📋 Complete Prediction Log</div>
+      <h1>Prediction <span class="gradient-text">History</span></h1>
+      <p style="max-width:500px;margin:1rem auto 0">
+        All past performance predictions with scores, grades, and model details.
+      </p>
+    </div>
+  </section>
+
+  <!-- Summary Stats -->
+  <section class="py-xl">
+    <div class="container">
+      <div class="grid-4 stagger">
+        <div class="stat-card animate-slide-up">
+          <div class="stat-icon purple">🎯</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-label">Total Predictions</div>
+          </div>
+        </div>
+        <div class="stat-card animate-slide-up">
+          <div class="stat-icon cyan">📈</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-avg">—</div>
+            <div class="stat-label">Avg Score</div>
+          </div>
+        </div>
+        <div class="stat-card animate-slide-up">
+          <div class="stat-icon green">📚</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-study">—</div>
+            <div class="stat-label">Avg Study Hrs</div>
+          </div>
+        </div>
+        <div class="stat-card animate-slide-up">
+          <div class="stat-icon amber">🏫</div>
+          <div class="stat-info">
+            <div class="stat-value" id="stat-attend">—</div>
+            <div class="stat-label">Avg Attendance</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts -->
+  <section class="py-xl">
+    <div class="container">
+      <div class="grid-2 gap-xl">
+        <div class="card">
+          <h3 style="margin-bottom:1.25rem">📉 Score Trend (Last 10)</h3>
+          <div style="height:200px">
+            <canvas id="trend-chart"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:1.25rem">🏆 Grade Distribution</h3>
+          <div style="height:200px">
+            <canvas id="grade-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prediction Table -->
+  <section class="py-xl">
+    <div class="container">
+      <div class="flex-between mb-lg">
+        <div>
+          <div class="section-label">All Predictions</div>
+          <h2>Prediction <span class="gradient-text">Log</span></h2>
+        </div>
+        <a href="/predict" class="btn btn-primary">
+          <span>🔮</span> New Prediction
+        </a>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="history-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Study Hrs</th>
+              <th>Attendance</th>
+              <th>Sleep</th>
+              <th>Prev Score</th>
+              <th>Predicted Score</th>
+              <th>Grade</th>
+              <th>Model</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <!-- Shimmer placeholder rows -->
+            <tr class="shimmer-row" id="loading-rows">
+              <td colspan="9" style="text-align:center;padding:3rem">
+                <div class="loading-spinner"></div>
+                <p class="text-muted mt-md text-sm">Loading predictions…</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div id="empty-history" class="empty-state hidden">
+        <div class="empty-icon">📭</div>
+        <h3 style="color:var(--text-muted)">No predictions yet</h3>
+        <p class="text-sm mt-md">
+          Make your first prediction to see history here.
+        </p>
+        <a href="/predict" class="btn btn-primary mt-lg">
+          <span>🔮</span> Make First Prediction
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Model info cards -->
+  <section class="py-xl">
+    <div class="container">
+      <div class="section-label">About ML Models</div>
+      <div class="grid-2 gap-xl mt-md">
+        <div class="card" style="border-color:rgba(6,182,212,0.25);background:rgba(6,182,212,0.05)">
+          <div style="font-size:2rem;margin-bottom:0.75rem">📈</div>
+          <h3 style="color:var(--accent-cyan);margin-bottom:0.5rem">Linear Regression</h3>
+          <p class="text-sm" style="line-height:1.7">
+            A foundational statistical model that finds the best-fit linear relationship between input features
+            and the predicted score. Fast, transparent, and easy to interpret — ideal for understanding
+            which factors most influence your performance.
+          </p>
+          <div class="flex gap-sm mt-md" style="flex-wrap:wrap">
+            <span class="model-tag lr">Fast</span>
+            <span class="model-tag lr">Interpretable</span>
+            <span class="model-tag lr">Linear patterns</span>
+          </div>
+        </div>
+        <div class="card" style="border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.05)">
+          <div style="font-size:2rem;margin-bottom:0.75rem">🌲</div>
+          <h3 style="color:var(--accent-green);margin-bottom:0.5rem">Random Forest</h3>
+          <p class="text-sm" style="line-height:1.7">
+            An ensemble of 150 decision trees that vote on the prediction. Captures complex, non-linear
+            relationships and interactions between features. More robust to outliers and generally achieves
+            higher accuracy — our recommended model.
+          </p>
+          <div class="flex gap-sm mt-md" style="flex-wrap:wrap">
+            <span class="model-tag rf">High accuracy</span>
+            <span class="model-tag rf">Non-linear</span>
+            <span class="model-tag rf">Robust</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding:2rem 0;border-top:1px solid var(--glass-border);margin-top:2rem">
+    <div class="container text-center">
+      <p class="text-sm text-muted">🎓 Student Performance Predictor · ML + Flask + PostgreSQL</p>
+    </div>
+  </footer>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

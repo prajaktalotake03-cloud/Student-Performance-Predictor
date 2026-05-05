@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predict Performance — Student Performance Predictor</title>
+  <meta name="description" content="Enter your study hours, attendance, sleep, and previous scores to get an AI-powered exam score prediction with personalised recommendations." />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="stylesheet" href="/static/css/components.css" />
+  <link rel="stylesheet" href="/static/css/animations.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="nav-brand">
+        <div class="brand-icon">🎓</div>
+        <span>StudyPredict <span style="color:var(--accent-cyan);font-weight:300">AI</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/" id="nav-home">Dashboard</a></li>
+        <li><a href="/predict" class="active" id="nav-predict">Predict</a></li>
+        <li><a href="/history" id="nav-history">History</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="py-2xl" style="text-align:center;position:relative;overflow:hidden">
+    <div class="orb orb-1" style="opacity:0.5"></div>
+    <div class="orb orb-2" style="opacity:0.5"></div>
+    <div class="container" style="position:relative;z-index:2">
+      <div class="hero-badge">🔮 ML-Powered Score Prediction</div>
+      <h1>Predict Your <span class="gradient-text">Performance</span></h1>
+      <p style="max-width:500px;margin:1rem auto 0">
+        Adjust the sliders below and let our AI models calculate your predicted exam score.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container py-xl">
+    <div class="grid-2 gap-xl" style="align-items:start">
+
+      <!-- ── Left: Input Form ── -->
+      <div>
+        <form id="predict-form" novalidate>
+
+          <!-- Student Name -->
+          <div class="card card-sm mb-lg">
+            <h3 style="margin-bottom:1.25rem">👤 Student Details</h3>
+            <div class="form-group">
+              <label class="form-label" for="student-name">Your Name (optional)</label>
+              <input
+                id="student-name"
+                type="text"
+                class="form-input"
+                placeholder="e.g. Prajakta Sharma"
+              />
+            </div>
+          </div>
+
+          <!-- Study Inputs -->
+          <div class="card card-sm mb-lg">
+            <h3 style="margin-bottom:1.5rem">📊 Study Habits</h3>
+            <div class="flex-col gap-xl">
+
+              <!-- Study Hours -->
+              <div class="form-group">
+                <label class="form-label" for="study-hours">
+                  Daily Study Hours
+                  <span class="label-value" id="study-hours-val">5.0</span>
+                </label>
+                <input id="study-hours" type="range" class="form-slider"
+                  min="0.5" max="12" step="0.5" value="5" />
+                <div class="slider-marks">
+                  <span>0.5 hrs</span><span>6 hrs</span><span>12 hrs</span>
+                </div>
+              </div>
+
+              <!-- Attendance -->
+              <div class="form-group">
+                <label class="form-label" for="attendance">
+                  Attendance Percentage
+                  <span class="label-value" id="attendance-val">80</span><span style="color:var(--text-muted);font-size:0.8rem">%</span>
+                </label>
+                <input id="attendance" type="range" class="form-slider"
+                  min="30" max="100" step="1" value="80" />
+                <div class="slider-marks">
+                  <span>30%</span><span>65%</span><span>100%</span>
+                </div>
+              </div>
+
+              <!-- Sleep Hours -->
+              <div class="form-group">
+                <label class="form-label" for="sleep-hours">
+                  Nightly Sleep Hours
+                  <span class="label-value" id="sleep-hours-val">7.0</span>
+                </label>
+                <input id="sleep-hours" type="range" class="form-slider"
+                  min="4" max="10" step="0.5" value="7" />
+                <div class="slider-marks">
+                  <span>4 hrs</span><span>7 hrs</span><span>10 hrs</span>
+                </div>
+              </div>
+
+              <!-- Previous Score -->
+              <div class="form-group">
+                <label class="form-label" for="prev-score">
+                  Previous Exam Score
+                  <span class="label-value" id="prev-score-val">65</span><span style="color:var(--text-muted);font-size:0.8rem">%</span>
+                </label>
+                <input id="prev-score" type="range" class="form-slider"
+                  min="0" max="100" step="1" value="65" />
+                <div class="slider-marks">
+                  <span>0%</span><span>50%</span><span>100%</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Extra-Curricular -->
+          <div class="card card-sm mb-lg">
+            <h3 style="margin-bottom:1rem">🎭 Extra-Curricular Activities</h3>
+            <div class="toggle-wrapper">
+              <label class="toggle">
+                <input type="checkbox" id="extra-curricular" />
+                <span class="toggle-slider"></span>
+              </label>
+              <div>
+                <div class="text-sm font-medium">Participating in activities</div>
+                <div class="text-xs text-muted">Sports, clubs, volunteering, arts, etc.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Model Selection -->
+          <div class="card card-sm mb-lg">
+            <h3 style="margin-bottom:1rem">🤖 ML Model</h3>
+            <div class="model-selector">
+              <label class="model-option">
+                <input type="radio" name="model" value="random_forest" checked />
+                <div class="model-card">
+                  <div class="model-icon">🌲</div>
+                  <div class="model-name">Random Forest</div>
+                  <div class="model-desc">Higher accuracy</div>
+                </div>
+              </label>
+              <label class="model-option">
+                <input type="radio" name="model" value="linear_regression" />
+                <div class="model-card">
+                  <div class="model-icon">📈</div>
+                  <div class="model-name">Linear Regression</div>
+                  <div class="model-desc">Interpretable & fast</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button id="submit-btn" type="submit" class="btn btn-primary btn-lg btn-block">
+            <span>🔮</span> Predict Performance
+          </button>
+
+        </form>
+      </div>
+
+      <!-- ── Right: Results ── -->
+      <div class="flex-col gap-lg" style="position:sticky;top:90px">
+
+        <!-- Score Result Panel -->
+        <div id="result-panel" class="card hidden">
+          <div class="result-panel">
+            <!-- Grade badge -->
+            <div id="result-grade" class="grade-badge grade-B">B</div>
+
+            <!-- SVG ring -->
+            <div class="score-ring">
+              <svg width="180" height="180" viewBox="0 0 180 180">
+                <defs>
+                  <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%"   stop-color="#7c3aed"/>
+                    <stop offset="100%" stop-color="#06b6d4"/>
+                  </linearGradient>
+                </defs>
+                <circle class="ring-bg"   cx="90" cy="90" r="70" />
+                <circle class="ring-fill" id="score-ring-fill" cx="90" cy="90" r="70"
+                  stroke-dasharray="439.82" stroke-dashoffset="439.82" />
+              </svg>
+              <div class="score-center">
+                <div class="score-number" id="result-score-num">0.0</div>
+                <div class="score-pct">out of 100</div>
+              </div>
+            </div>
+
+            <!-- Score message -->
+            <p id="result-desc" style="font-size:0.95rem;margin:0.75rem 0 0.5rem"></p>
+
+            <!-- Model used -->
+            <div class="text-xs text-muted mt-sm">
+              Predicted using: <span id="result-model" style="color:var(--accent-violet);font-weight:600"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Placeholder before prediction -->
+        <div id="result-placeholder" class="card" style="text-align:center;padding:3rem 2rem">
+          <div style="font-size:3rem;margin-bottom:1rem;opacity:0.4">🔮</div>
+          <h3 style="color:var(--text-muted);font-size:1rem;font-weight:500">
+            Fill in the form and click <br/><strong style="color:var(--accent-violet)">Predict Performance</strong>
+          </h3>
+          <p class="text-sm text-muted mt-md">
+            Your score prediction and personalised AI study recommendations will appear here.
+          </p>
+        </div>
+
+        <!-- Input Summary -->
+        <div class="card card-sm" id="input-summary" style="display:none">
+          <div class="section-label" style="margin-bottom:0.75rem">Input Summary</div>
+          <div class="flex-col gap-sm" id="summary-items"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Recommendations Section -->
+    <div id="recommendations-section" class="mt-xl hidden">
+      <div class="section-divider" style="margin:2rem 0"></div>
+      <div class="section-label">AI Study Recommendations</div>
+      <h2 style="margin-bottom:1.5rem">
+        Your Personalised <span class="gradient-text">Action Plan</span>
+      </h2>
+      <div id="recommendations-list" class="flex-col gap-md"></div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer style="padding:2rem 0;border-top:1px solid var(--glass-border);margin-top:3rem">
+    <div class="container text-center">
+      <p class="text-sm text-muted">🎓 Student Performance Predictor · AI-Powered Study Assistant</p>
+    </div>
+  </footer>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Hidden placeholder toggle -->
+  <script>
+    document.getElementById('predict-form').addEventListener('submit', () => {
+      const placeholder = document.getElementById('result-placeholder');
+      const panel = document.getElementById('result-panel');
+      if (placeholder) placeholder.style.display = 'none';
+      if (panel) panel.classList.remove('hidden');
+    });
+  </script>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/recommendations.js"></script>
+  <script src="/static/js/predict.js"></script>
+</body>
+</html>
